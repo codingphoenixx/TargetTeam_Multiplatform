@@ -28,7 +28,6 @@ class PositionProvider extends ChangeNotifier {
 
   double get heightCorrection => _heightCorrection;
 
-  // Initialisierung
   Future<void> _init() async {
     await _loadPreferences();
     _startLocationUpdates();
@@ -72,6 +71,7 @@ class PositionProvider extends ChangeNotifier {
       if (permission == LocationPermission.denied) return;
     }
 
+    //TODO: CHECK FOR FASTER UPDATES
     Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,

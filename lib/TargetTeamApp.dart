@@ -64,6 +64,7 @@ class PositionScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      //TODO: MAKE FONT A BIT BIGGER
                       _buildRadio(
                         context,
                         provider,
