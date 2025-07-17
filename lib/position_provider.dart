@@ -1,4 +1,6 @@
 import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:share_plus/share_plus.dart';
@@ -71,13 +73,41 @@ class PositionProvider extends ChangeNotifier {
       if (permission == LocationPermission.denied) return;
     }
 
-    //TODO: CHECK FOR FASTER UPDATES
-    Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
+    }
+
+    var locationSettings;
+
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      locationSettings = AndroidSettings(
+        accuracy: LocationAccuracy.best,
         distanceFilter: 0,
-      ),
-    ).listen((Position pos) {
+        forceLocationManager: true,
+        intervalDuration: const Duration(seconds: 0),
+        useMSLAltitude: true,
+      );
+    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      locationSettings = AppleSettings(
+        accuracy: LocationAccuracy.best,
+        activityType: ActivityType.airborne,
+        distanceFilter: 0,
+        pauseLocationUpdatesAutomatically: true,
+      );
+    } else {
+      locationSettings = const LocationSettings(
+        accuracy: LocationAccuracy.best,
+        distanceFilter: 0,
+      );
+    }
+
+    //TODO: CHECK FOR FASTER UPDATES
+    Geolocator.getPositionStream(locationSettings: locationSettings).listen((
+      Position pos,
+    ) {
       _position = pos;
       notifyListeners();
     });
@@ -132,11 +162,11 @@ class PositionProvider extends ChangeNotifier {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Höhenausgleich ändern'),
+        title: const Text('Höhenkorrekturfaktor ändern (in m)'),
         content: TextField(
           controller: controller,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(labelText: 'Höhenausgleich'),
+          decoration: const InputDecoration(labelText: 'Höhenkorrekturfaktor'),
         ),
         actions: [
           TextButton(

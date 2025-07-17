@@ -46,7 +46,7 @@ class PositionScreen extends StatelessWidget {
                         const Icon(Icons.height),
                         const SizedBox(width: 10),
                         Text(
-                          'Höhenausgleich: ${provider.heightCorrection.toStringAsFixed(2)}',
+                          'Höhenkorrekturfaktor: ${provider.heightCorrection.toStringAsFixed(2)} m',
                           style: const TextStyle(fontSize: 18),
                         ),
                         const Spacer(),
