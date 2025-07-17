@@ -104,7 +104,6 @@ class PositionProvider extends ChangeNotifier {
       );
     }
 
-    //TODO: CHECK FOR FASTER UPDATES
     Geolocator.getPositionStream(locationSettings: locationSettings).listen((
       Position pos,
     ) {

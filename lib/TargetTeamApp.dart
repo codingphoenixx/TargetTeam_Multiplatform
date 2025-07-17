@@ -62,9 +62,8 @@ class PositionScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      //TODO: MAKE FONT A BIT BIGGER
                       _buildRadio(
                         context,
                         provider,
@@ -187,7 +186,10 @@ class PositionScreen extends StatelessWidget {
             if (val != null) provider.setLocationMode(val);
           },
         ),
-        Text(label),
+        Text(label,
+        style: TextStyle(
+          fontSize: 20
+        ),),
       ],
     );
   }
