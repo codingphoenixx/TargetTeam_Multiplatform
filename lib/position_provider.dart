@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:targetteam_multiplatform/LocationHelper.dart';
+import 'package:targetteam_multiplatform/TargetTeamApp.dart';
 
 enum LocationMode { latLong, wgs84, etrs89 }
 
@@ -196,8 +197,9 @@ class PositionProvider extends ChangeNotifier {
       'Höhe: ${getFormattedAltitude()}',
       'Genauigkeit: ${getFormattedAccuracy()}',
       'HC: $_heightCorrection',
-      'LT: ${_position!.timestamp?.millisecondsSinceEpoch ?? ''}',
+      'LT: ${_position!.timestamp.millisecondsSinceEpoch ?? ''}',
       'CT: ${DateTime.now().millisecondsSinceEpoch}',
+      'V: ${TargetTeamApp.version}',
     ].join('\n');
 
     SharePlus.instance.share(ShareParams(subject: "Position", text: body));

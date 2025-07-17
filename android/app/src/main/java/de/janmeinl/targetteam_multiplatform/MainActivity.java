@@ -1,4 +1,4 @@
-package com.example.targetteam_multiplatform;
+package de.janmeinl.targetteam_multiplatform;
 
 import io.flutter.embedding.android.FlutterActivity;
 

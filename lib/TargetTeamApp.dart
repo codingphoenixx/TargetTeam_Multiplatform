@@ -4,11 +4,12 @@ import 'position_provider.dart';
 
 class TargetTeamApp extends StatelessWidget {
   const TargetTeamApp({super.key});
-
+  static final String name = "Target Team v2.0.0 Build 2";
+  static final String version = "2.0.0+2";
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Target Team',
+      title: name,
       theme: ThemeData.dark(),
       home: const PositionScreen(),
     );
@@ -29,7 +30,7 @@ class PositionScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Target Team')),
+      appBar: AppBar(title: Text(TargetTeamApp.name)),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
