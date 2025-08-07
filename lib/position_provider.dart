@@ -137,6 +137,7 @@ class PositionProvider extends ChangeNotifier {
 
   String getFormattedAltitude() {
     if (_position == null) return '';
+
     final meters = (_position!.altitude - _heightCorrection).round();
     final feet = ((_position!.altitude - _heightCorrection) * 3.278688525)
         .round();
@@ -145,7 +146,7 @@ class PositionProvider extends ChangeNotifier {
 
   String getFormattedAccuracy() {
     if (_position == null) return '';
-    return '${_position!.accuracy.round()} m';
+    return '${_position!.accuracy.round()} m (${_position!.altitudeAccuracy.round()} m)';
   }
 
   String getFormattedTime(DateTime? time) {
