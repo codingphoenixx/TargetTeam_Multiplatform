@@ -1,0 +1,27 @@
+{
+  "@@locale": "en",
+  "heightCorrectionFactor": "Height correction factor: {meters} m",
+  "@heightCorrectionFactor": {
+    "placeholders": {
+      "meters": {
+        "type": "double"
+      }
+    }
+  },
+  "latLon": "Lat/Lon",
+  "wgs84": "WGS84",
+  "etrs89": "ETRS89",
+  "currentTime": "Current time",
+  "lastUpdate": "Last update",
+  "position": "Position",
+  "altitudeM": "Altitude (m)",
+  "altitudeFt": "Altitude (ft)",
+  "accuracy": "Accuracy",
+  "share": "Share",
+  "shareCommentTitle": "Comment for sharing",
+  "commentOptional": "Comment (optional)",
+  "cancel": "Cancel",
+  "shareAction": "Share",
+  "edit": "Edit",
+  "height": "Height"
+}

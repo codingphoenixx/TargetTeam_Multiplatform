@@ -1,0 +1,27 @@
+{
+  "@@locale": "de",
+  "heightCorrectionFactor": "Höhenkorrekturfaktor: {meters} m",
+  "@heightCorrectionFactor": {
+    "placeholders": {
+      "meters": {
+        "type": "double"
+      }
+    }
+  },
+  "latLon": "Lat/Lon",
+  "wgs84": "WGS84",
+  "etrs89": "ETRS89",
+  "currentTime": "Aktuelle Zeit",
+  "lastUpdate": "Letztes Update",
+  "position": "Position",
+  "altitudeM": "Höhe (m)",
+  "altitudeFt": "Höhe (ft)",
+  "accuracy": "Genauigkeit",
+  "share": "Teilen",
+  "shareCommentTitle": "Kommentar zum Teilen",
+  "commentOptional": "Kommentar (optional)",
+  "cancel": "Abbrechen",
+  "shareAction": "Teilen",
+  "edit": "Bearbeiten",
+  "height": "Höhe"
+}

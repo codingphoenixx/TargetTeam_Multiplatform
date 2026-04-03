@@ -1,0 +1,27 @@
+{
+  "@@locale": "nl",
+  "heightCorrectionFactor": "Hoogtecorrectiefactor: {meters} m",
+  "@heightCorrectionFactor": {
+    "placeholders": {
+      "meters": {
+        "type": "double"
+      }
+    }
+  },
+  "latLon": "Lat/Lon",
+  "wgs84": "WGS84",
+  "etrs89": "ETRS89",
+  "currentTime": "Huidige tijd",
+  "lastUpdate": "Laatste update",
+  "position": "Positie",
+  "altitudeM": "Hoogte (m)",
+  "altitudeFt": "Hoogte (ft)",
+  "accuracy": "Nauwkeurigheid",
+  "share": "Delen",
+  "shareCommentTitle": "Opmerking bij delen",
+  "commentOptional": "Opmerking (optioneel)",
+  "cancel": "Annuleren",
+  "shareAction": "Delen",
+  "edit": "Bewerken",
+  "height": "Hoogte"
+}
