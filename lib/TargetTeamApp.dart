@@ -8,6 +8,7 @@ class TargetTeamApp extends StatelessWidget {
 
   static final String name = "Target Team v2.0.1";
   static final String version = "2.0.1";
+  static final int buildVersion = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class PositionScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(TargetTeamApp.name)),
+      appBar: AppBar(title: Text("${TargetTeamApp.name} (Build ${TargetTeamApp.buildVersion})")),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

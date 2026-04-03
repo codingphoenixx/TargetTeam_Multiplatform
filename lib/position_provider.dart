@@ -200,7 +200,7 @@ class PositionProvider extends ChangeNotifier {
       'HC: $_heightCorrection',
       'LT: ${_position!.timestamp.millisecondsSinceEpoch ?? ''}',
       'CT: ${DateTime.now().millisecondsSinceEpoch}',
-      'V: ${TargetTeamApp.version}',
+      'V: ${TargetTeamApp.version}:${TargetTeamApp.buildVersion}',
     ].join('\n');
 
     SharePlus.instance.share(ShareParams(subject: "Position", text: body));
