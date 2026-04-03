@@ -1,4 +1,4 @@
-name: targetteam_multiplatform
+name: TargetTeam
 description: "A port from the TargetTeam app for multiple platforms"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 2.0.1+3
+version: 2.0.2+4
 
 environment:
   sdk: ^3.11.4
@@ -38,6 +38,7 @@ dependencies:
   share_plus: ^12.0.2
   shared_preferences: ^2.5.5
   intl: ^0.20.2
+  package_info_plus: ^9.0.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -23,5 +23,9 @@
   "cancel": "Annuleren",
   "shareAction": "Delen",
   "edit": "Bewerken",
-  "height": "Hoogte"
+  "height": "Hoogte",
+  "changeHeightTitle": "Hoogtecorrectiefactor wijzigen (m)",
+  "heightCorrectionLabel": "Hoogtecorrectiefactor",
+  "cancel": "Annuleren",
+  "ok": "OK"
 }

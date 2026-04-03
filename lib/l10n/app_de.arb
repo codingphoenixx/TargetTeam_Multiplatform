@@ -23,5 +23,9 @@
   "cancel": "Abbrechen",
   "shareAction": "Teilen",
   "edit": "Bearbeiten",
-  "height": "Höhe"
+  "height": "Höhe",
+  "changeHeightTitle": "Höhenkorrekturfaktor ändern (in m)",
+  "heightCorrectionLabel": "Höhenkorrekturfaktor",
+  "cancel": "Abbrechen",
+  "ok": "OK"
 }

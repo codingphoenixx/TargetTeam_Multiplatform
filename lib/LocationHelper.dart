@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:TargetTeam/MathUtils.dart';
 import 'package:proj4dart/proj4dart.dart';
-import 'package:targetteam_multiplatform/MathUtils.dart';
 
 class LocationHelper {
   static const double A = 6378137.0;

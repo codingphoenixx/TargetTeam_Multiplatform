@@ -1,20 +1,16 @@
 import 'dart:async';
 
+import 'package:TargetTeam/LocationHelper.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:targetteam_multiplatform/LocationHelper.dart';
-import 'package:targetteam_multiplatform/TargetTeamApp.dart';
 
 enum LocationMode { latLong, wgs84, etrs89 }
 
 class PositionProvider extends ChangeNotifier {
   static PositionProvider? _instance;
 
-  static PositionProvider get instance =>
-      _instance ??= PositionProvider._internal();
+  static PositionProvider get instance => _instance ??= PositionProvider._internal();
 
   PositionProvider._internal() {
     _init();
@@ -23,6 +19,8 @@ class PositionProvider extends ChangeNotifier {
   Position? _position;
   LocationMode _locationMode = LocationMode.latLong;
   double _heightCorrection = 48.7590;
+  static const double feetToMeterConstant = 3.278688525;
+  static const int staleSeconds = 15;
   Timer? _timer;
 
   Position? get position => _position;
@@ -34,10 +32,7 @@ class PositionProvider extends ChangeNotifier {
   Future<void> _init() async {
     await _loadPreferences();
     _startLocationUpdates();
-    _timer = Timer.periodic(
-      const Duration(milliseconds: 200),
-      (_) => notifyListeners(),
-    );
+
   }
 
   Future<void> _loadPreferences() async {
@@ -87,6 +82,7 @@ class PositionProvider extends ChangeNotifier {
         accuracy: LocationAccuracy.best,
         distanceFilter: 0,
         forceLocationManager: true,
+        timeLimit: null,
         intervalDuration: const Duration(seconds: 0),
         useMSLAltitude: true,
       );
@@ -94,6 +90,7 @@ class PositionProvider extends ChangeNotifier {
         defaultTargetPlatform == TargetPlatform.macOS) {
       locationSettings = AppleSettings(
         accuracy: LocationAccuracy.best,
+        timeLimit: null,
         activityType: ActivityType.airborne,
         distanceFilter: 0,
         pauseLocationUpdatesAutomatically: true,
@@ -102,6 +99,7 @@ class PositionProvider extends ChangeNotifier {
       locationSettings = const LocationSettings(
         accuracy: LocationAccuracy.best,
         distanceFilter: 0,
+        timeLimit: null,
       );
     }
 
@@ -112,6 +110,8 @@ class PositionProvider extends ChangeNotifier {
       notifyListeners();
     });
   }
+
+
 
   String getFormattedPosition() {
     if (_position == null) return '';
@@ -135,12 +135,22 @@ class PositionProvider extends ChangeNotifier {
     }
   }
 
+  bool isStale() {
+    final now = DateTime.now();
+    bool redColor = false;
+    if (position != null && position!.timestamp != null) {
+      redColor = now.difference(position!.timestamp).inSeconds > staleSeconds;
+    }
+    return redColor;
+  }
+
   String getFormattedAltitude() {
     if (_position == null) return '';
 
-    final meters = (_position!.altitude - _heightCorrection).round();
-    final feet = ((_position!.altitude - _heightCorrection) * 3.278688525)
-        .round();
+    final meters = (_position!.altitude - _heightCorrection).toStringAsFixed(0);
+    final feet =
+        ((_position!.altitude - _heightCorrection) * feetToMeterConstant)
+            .toStringAsFixed(0);
     return '$meters m / $feet ft';
   }
 
@@ -154,56 +164,6 @@ class PositionProvider extends ChangeNotifier {
     return '${time.hour.toString().padLeft(2, '0')}:'
         '${time.minute.toString().padLeft(2, '0')}:'
         '${time.second.toString().padLeft(2, '0')}';
-  }
-
-  Future<void> showChangeHeightDialog(BuildContext context) async {
-    final controller = TextEditingController(
-      text: _heightCorrection.toString(),
-    );
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Höhenkorrekturfaktor ändern (in m)'),
-        content: TextField(
-          controller: controller,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(labelText: 'Höhenkorrekturfaktor'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Abbrechen'),
-          ),
-          TextButton(
-            onPressed: () {
-              final value = double.tryParse(controller.text);
-              if (value != null) {
-                setHeightCorrection(value);
-                Navigator.pop(context);
-              }
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void sharePosition(BuildContext context, {String? comment}) {
-    if (_position == null) return;
-    final body = [
-      if (comment != null && comment.isNotEmpty) '$comment:\n',
-      _locationMode.toString().split('.').last.toUpperCase(),
-      getFormattedPosition(),
-      'Höhe: ${getFormattedAltitude()}',
-      'Genauigkeit: ${getFormattedAccuracy()}',
-      'HC: $_heightCorrection',
-      'LT: ${_position!.timestamp.millisecondsSinceEpoch ?? ''}',
-      'CT: ${DateTime.now().millisecondsSinceEpoch}',
-      'V: ${TargetTeamApp.version}:${TargetTeamApp.buildVersion}',
-    ].join('\n');
-
-    SharePlus.instance.share(ShareParams(subject: "Position", text: body));
   }
 
   @override

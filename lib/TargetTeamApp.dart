@@ -1,29 +1,31 @@
+import 'package:TargetTeam/AppInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'l10n/app_localizations.dart';
 import 'position_provider.dart';
 
 class TargetTeamApp extends StatelessWidget {
-  const TargetTeamApp({super.key});
+  const TargetTeamApp({super.key, required this.appInfo});
 
-  static final String name = "Target Team v2.0.1";
-  static final String version = "2.0.1";
-  static final int buildVersion = 3;
+  final AppInfo appInfo;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: name,
+      title: appInfo.appName,
       theme: ThemeData.dark(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const PositionScreen(),
+      home: PositionScreen(appInfo: appInfo),
     );
   }
 }
 
 class PositionScreen extends StatelessWidget {
-  const PositionScreen({super.key});
+  const PositionScreen({super.key, required this.appInfo});
+
+  final AppInfo appInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -31,20 +33,21 @@ class PositionScreen extends StatelessWidget {
     final provider = Provider.of<PositionProvider>(context);
 
     final now = DateTime.now();
-    bool redColor = false;
-    if (provider.position != null && provider.position!.timestamp != null) {
-      redColor = now.difference(provider.position!.timestamp).inSeconds > 15;
-    }
+    final isStale = context.select<PositionProvider, bool>((p) => p.isStale());
 
     return Scaffold(
-      appBar: AppBar(title: Text("${TargetTeamApp.name} (Build ${TargetTeamApp.buildVersion})")),
+      appBar: AppBar(
+        title: Text(
+          "${appInfo.appName} v${appInfo.version} (Build ${appInfo.buildNumber})",
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
               GestureDetector(
-                onTap: () => provider.showChangeHeightDialog(context),
+                onTap: () => showChangeHeightDialog(context),
                 child: Card(
                   color: Colors.grey[900],
                   child: Padding(
@@ -108,11 +111,11 @@ class PositionScreen extends StatelessWidget {
                   Expanded(
                     child: _InfoCard(
                       title: l10n.lastUpdate,
-                      redData: redColor,
+                      redData: isStale,
                       value: provider.position != null
                           ? provider.getFormattedTime(
-                        provider.position!.timestamp,
-                      )
+                              provider.position!.timestamp,
+                            )
                           : '',
                     ),
                   ),
@@ -123,12 +126,12 @@ class PositionScreen extends StatelessWidget {
                 title: l10n.position,
                 fullWidth: true,
                 textAlign: TextAlign.end,
-                redData: redColor,
+                redData: isStale,
                 value: provider.getFormattedPosition(),
                 valueStyle: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: redColor ? Colors.red : Colors.white,
+                  color: isStale ? Colors.red : Colors.white,
                 ),
               ),
               const SizedBox(height: 10),
@@ -137,7 +140,7 @@ class PositionScreen extends StatelessWidget {
                   Expanded(
                     child: _InfoCard(
                       title: l10n.altitudeM,
-                      redData: redColor,
+                      redData: isStale,
                       value: provider.position != null
                           ? provider.getFormattedAltitude().split('/')[0]
                           : '',
@@ -146,7 +149,7 @@ class PositionScreen extends StatelessWidget {
                   Expanded(
                     child: _InfoCard(
                       title: l10n.altitudeFt,
-                      redData: redColor,
+                      redData: isStale,
                       value: provider.position != null
                           ? provider.getFormattedAltitude().split('/')[1]
                           : '',
@@ -155,7 +158,7 @@ class PositionScreen extends StatelessWidget {
                   Expanded(
                     child: _InfoCard(
                       title: l10n.accuracy,
-                      redData: redColor,
+                      redData: isStale,
                       value: provider.getFormattedAccuracy(),
                     ),
                   ),
@@ -182,11 +185,11 @@ class PositionScreen extends StatelessWidget {
   }
 
   Widget _buildRadio(
-      BuildContext context,
-      PositionProvider provider,
-      LocationMode mode,
-      String label,
-      ) {
+    BuildContext context,
+    PositionProvider provider,
+    LocationMode mode,
+    String label,
+  ) {
     return InkWell(
       onTap: () => provider.setLocationMode(mode),
       customBorder: const StadiumBorder(),
@@ -227,7 +230,7 @@ class PositionScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              provider.sharePosition(context, comment: controller.text);
+              sharePosition(context, appInfo, comment: controller.text);
               Navigator.pop(context);
             },
             child: Text(l10n.shareAction),
@@ -235,6 +238,63 @@ class PositionScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> showChangeHeightDialog(BuildContext context) async {
+    final provider = Provider.of<PositionProvider>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
+    final controller = TextEditingController(
+      text: provider.heightCorrection.toString(),
+    );
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.changeHeightTitle),
+        content: TextField(
+          controller: controller,
+          keyboardType: const TextInputType.numberWithOptions(
+            decimal: true,
+            signed: false,
+          ),
+          decoration: InputDecoration(labelText: l10n.heightCorrectionLabel),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              final value = double.tryParse(controller.text);
+              if (value != null) {
+                provider.setHeightCorrection(value);
+                Navigator.pop(context);
+              }
+            },
+            child: Text(l10n.ok),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void sharePosition(BuildContext context, AppInfo appInfo, {String? comment}) {
+    final provider = context.read<PositionProvider>();
+    if (provider.position == null) return;
+    final body = [
+      if (comment != null && comment.isNotEmpty) '$comment:\n',
+      provider.locationMode.toString().split('.').last.toUpperCase(),
+      provider.getFormattedPosition(),
+      'H: ${provider.getFormattedAltitude()}',
+      'A: ${provider.getFormattedAccuracy()}',
+      'HC: ${provider.heightCorrection}',
+      'LT: ${provider.position!.timestamp.millisecondsSinceEpoch ?? ''}',
+      'CT: ${DateTime.now().millisecondsSinceEpoch}',
+      'V: ${appInfo.version}:${appInfo.buildNumber}',
+    ].join('\n');
+
+    SharePlus.instance.share(ShareParams(subject: "Position", text: body));
   }
 }
 
@@ -274,7 +334,8 @@ class _InfoCard extends StatelessWidget {
             Text(
               value,
               textAlign: textAlign,
-              style: valueStyle ??
+              style:
+                  valueStyle ??
                   TextStyle(
                     fontSize: 20,
                     color: redData ? Colors.red : Colors.white,

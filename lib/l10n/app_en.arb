@@ -23,5 +23,9 @@
   "cancel": "Cancel",
   "shareAction": "Share",
   "edit": "Edit",
-  "height": "Height"
+  "height": "Height",
+  "changeHeightTitle": "Change height correction factor (m)",
+  "heightCorrectionLabel": "Height correction factor",
+  "cancel": "Cancel",
+  "ok": "OK"
 }
