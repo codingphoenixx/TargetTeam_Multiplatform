@@ -32,7 +32,10 @@ class PositionProvider extends ChangeNotifier {
   Future<void> _init() async {
     await _loadPreferences();
     _startLocationUpdates();
-
+    _timer = Timer.periodic(
+      const Duration(milliseconds: 200),
+          (_) => notifyListeners(),
+    );
   }
 
   Future<void> _loadPreferences() async {
@@ -84,7 +87,7 @@ class PositionProvider extends ChangeNotifier {
         forceLocationManager: true,
         timeLimit: null,
         intervalDuration: const Duration(seconds: 0),
-        useMSLAltitude: false,
+        useMSLAltitude: true,
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS) {
@@ -161,6 +164,7 @@ class PositionProvider extends ChangeNotifier {
 
   String getFormattedTime(DateTime? time) {
     if (time == null) return '';
+    time = time.toLocal();
     return '${time.hour.toString().padLeft(2, '0')}:'
         '${time.minute.toString().padLeft(2, '0')}:'
         '${time.second.toString().padLeft(2, '0')}';

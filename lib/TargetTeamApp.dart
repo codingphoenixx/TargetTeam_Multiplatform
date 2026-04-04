@@ -74,28 +74,38 @@ class PositionScreen extends StatelessWidget {
                 color: Colors.grey[900],
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildRadio(
-                        context,
-                        provider,
-                        LocationMode.latLong,
-                        l10n.latLon,
-                      ),
-                      _buildRadio(
-                        context,
-                        provider,
-                        LocationMode.wgs84,
-                        l10n.wgs84,
-                      ),
-                      _buildRadio(
-                        context,
-                        provider,
-                        LocationMode.etrs89,
-                        l10n.etrs89,
-                      ),
-                    ],
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              _buildRadio(
+                                context,
+                                provider,
+                                LocationMode.latLong,
+                                l10n.latLon,
+                              ),
+                              _buildRadio(
+                                context,
+                                provider,
+                                LocationMode.wgs84,
+                                l10n.wgs84,
+                              ),
+                              _buildRadio(
+                                context,
+                                provider,
+                                LocationMode.etrs89,
+                                l10n.etrs89,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -317,39 +327,49 @@ class _InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var card = Card(
+    final card = Card(
       color: Colors.grey[850],
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
-          crossAxisAlignment: fullWidth == true
-              ? CrossAxisAlignment.stretch
-              : CrossAxisAlignment.start,
+          crossAxisAlignment:
+          fullWidth == true ? CrossAxisAlignment.stretch : CrossAxisAlignment.start,
           children: [
             Text(
               title,
               style: const TextStyle(color: Colors.grey, fontSize: 14),
             ),
             const SizedBox(height: 4),
-            Text(
-              value,
-              textAlign: textAlign,
-              style:
-                  valueStyle ??
-                  TextStyle(
-                    fontSize: 20,
-                    color: redData ? Colors.red : Colors.white,
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final alignRight = textAlign == TextAlign.right || textAlign == TextAlign.end;
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  reverse: alignRight,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                    child: Align(
+                      alignment:
+                      alignRight ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Text(
+                        value,
+                        softWrap: false,
+                        textAlign: textAlign,
+                        style: valueStyle ??
+                            TextStyle(
+                              fontSize: 20,
+                              color: redData ? Colors.red : Colors.white,
+                            ),
+                      ),
+                    ),
                   ),
+                );
+              },
             ),
           ],
         ),
       ),
     );
-
-    if (fullWidth == true) {
-      return SizedBox(width: double.infinity, child: card);
-    } else {
-      return card;
-    }
+    return card;
   }
 }
