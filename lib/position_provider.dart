@@ -84,7 +84,7 @@ class PositionProvider extends ChangeNotifier {
         forceLocationManager: true,
         timeLimit: null,
         intervalDuration: const Duration(seconds: 0),
-        useMSLAltitude: true,
+        useMSLAltitude: false,
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS) {
